@@ -42,7 +42,7 @@ def whats_new(session):
 
 def latest_versions(session):
     """Собирает информацию о статусах версий Python"""
-    main_doc_url = urljoin(MAIN_DOC_URL, 'latest_version/')
+    main_doc_url = urljoin(MAIN_DOC_URL, 'latest_versions/')
     response = get_response(session, main_doc_url)
     if response is None:
         return
@@ -88,12 +88,6 @@ def download(session):
     with open(archive_path, 'wb') as file:
         file.write(response.content)
     logging.info(f'Архив был загружен и сохранён: {archive_path}')
-
-MODE_TO_FUNCTION = {
-    'whats-new': whats_new,
-    'latest-versions': latest_versions,
-    'download': download,
-}
 
 
 def pep(session):
@@ -142,13 +136,21 @@ def pep(session):
     results.append(('Total', total_peps))
     return results
 
+MODE_TO_FUNCTION = {
+    'whats-new': whats_new,
+    'latest-versions': latest_versions,
+    'download': download,
+    'pep': pep
+}
 
 def main():
     configure_logging()
     logging.info('Парсер запущен!')
+
     arg_parser = configure_argument_parser(MODE_TO_FUNCTION.keys())
     args = arg_parser.parse_args()
     logging.info(f'Аргументы командной строки: {args}')
+
     session = requests_cache.CachedSession()
     if args.clear_cache:
         session.cache.clear()
@@ -157,6 +159,7 @@ def main():
     if results is not None:
         control_output(results, args)
     logging.info('Парсер завершил работу.')
+
 
 if __name__ == '__main__':
     main() 
