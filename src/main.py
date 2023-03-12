@@ -46,8 +46,8 @@ def latest_versions(session):
     response = get_response(session, main_doc_url)
     if response is None:
         return
-    soup = BeautifulSoup(response.text, features='lxml')
-    sidebar = find_tag(soup, 'div', {'class': 'sphinxsidebarwrapper'})
+    soup = BeautifulSoup(response.text, 'lxml')
+    sidebar = find_tag(soup, 'div', attrs={'class': 'sphinxsidebarwrapper'})
     ul_tags = sidebar.find_all('ul')
     for ul in ul_tags:
         if 'All versions' in ul.text:
@@ -112,7 +112,7 @@ def pep(session):
     total_peps = 0
     for tag in tqdm(tr_tag):
         td_tag = find_tag(tag, 'td')
-        preview_status = td_tag.text[1:]
+        status_do = td_tag.text[1:]
         a_tag = find_tag(tr_tag, 'a')
         href_pep = a_tag['href']
         link_pep = urljoin(PEP_URL, href_pep)
@@ -129,12 +129,12 @@ def pep(session):
                     all_status[status] += 1
                 if status not in all_status:
                     all_status[status] = 1
-                if status not in EXPECTED_STATUS[preview_status]:
+                if status not in EXPECTED_STATUS[status_do]:
                     error_msg = (
                         'Несовпадающие статусы:\n'
                         f'{link_pep}\n'
-                        f'Статус в картрочке {status}\n'
-                        f'Ожидаемые статусы: {EXPECTED_STATUS[preview_status]}'
+                        f'Статус в карточке {status}\n'
+                        f'Ожидаемые статусы: {EXPECTED_STATUS[status_do]}'
                     )
                     logging.warning(error_msg)
     for status in all_status:
