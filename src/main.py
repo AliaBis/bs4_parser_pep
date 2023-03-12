@@ -3,15 +3,11 @@ from urllib.parse import urljoin
 import requests_cache
 from bs4 import BeautifulSoup
 from tqdm import tqdm
-from urllib.parse import urljoin
-from pathlib import Path
-from constants import BASE_DIR, MAIN_DOC_URL, PEP_URL,EXPECTED_STATUS
-from configs import configure_argument_parser
+from constants import BASE_DIR, MAIN_DOC_URL, PEP_URL, EXPECTED_STATUS
 from outputs import control_output
 import logging
 from configs import configure_argument_parser, configure_logging
-from utils import get_response
-from utils import find_tag
+from utils import get_response, find_tag
 
 
 def whats_new(session):
@@ -23,15 +19,17 @@ def whats_new(session):
     soup = BeautifulSoup(response.text, features='lxml')
     main_div = find_tag(soup, 'section', attrs={'id': 'what-s-new-in-python'})
     div_with_ul = find_tag(main_div, 'div', attrs={'class': 'toctree-wrapper'})
-    sections_by_python = div_with_ul.find_all('li', attrs={'class': 'toctree-l1'})
+    sections_by_python = div_with_ul.find_all(
+        'li', attrs={'class': 'toctree-l1'}
+    )
     results = [('Ссылка на статью', 'Заголовок', 'Редактор, Автор')]
     for section in tqdm(sections_by_python):
         version_a_tag = section.find('a')
         href = version_a_tag['href']
         version_link = urljoin(whats_new_url, href)
-        response = get_response(session, version_link) 
+        response = get_response(session, version_link)
         if response is None:
-            continue  
+            continue
         soup = BeautifulSoup(response.text, features='lxml')
         h1 = find_tag(soup, 'h1')
         dl = find_tag(soup, 'dl')
@@ -60,7 +58,7 @@ def latest_versions(session):
     for a_tag in a_tags:
         link = a_tag['href']
         text_match = re.search(pattern, a_tag.text)
-        if text_match is not None:  
+        if text_match is not None:
             version, status = text_match.groups()
         else:
             version, status = a_tag.text, ''
@@ -76,7 +74,9 @@ def download(session):
         return
     soup = BeautifulSoup(response.text, features='lxml')
     table_tag = find_tag(soup, 'table', attrs={'class': 'docutils'})
-    pdf_a4_tag = find_tag(table_tag, 'a', {'href': re.compile(r'.+pdf-a4\.zip$')})
+    pdf_a4_tag = find_tag(
+        table_tag, 'a', {'href': re.compile(r'.+pdf-a4\.zip$')}
+    )
     pdf_a4_link = pdf_a4_tag['href']
     archive_url = urljoin(downloads_url, pdf_a4_link)
     filename = archive_url.split('/')[-1]
@@ -136,12 +136,14 @@ def pep(session):
     results.append(('Total', total_peps))
     return results
 
+
 MODE_TO_FUNCTION = {
     'whats-new': whats_new,
     'latest-versions': latest_versions,
     'download': download,
     'pep': pep
 }
+
 
 def main():
     configure_logging()
@@ -162,4 +164,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main() 
+    main()
