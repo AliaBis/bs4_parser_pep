@@ -8,6 +8,7 @@ from configs import configure_argument_parser, configure_logging
 from constants import BASE_DIR, EXPECTED_STATUS, MAIN_DOC_URL, PEP_URL
 from outputs import control_output
 from utils import find_tag, get_response
+#import ConnectionError
 
 
 def whats_new(session):
@@ -52,7 +53,10 @@ def latest_versions(session):
             a_tags = ul.find_all('a')
             break
     else:
-        raise Exception('Ничего не нашлось')
+        #raise Exception('Ничего не нашлось')
+        #raise AttributeError(('Не найдены версии Python'))
+        raise ConnectionError(('Не найдены версии Python'))
+    
     results = [('Ссылка на документацию', 'Версия', 'Статус')]
     pattern = r'Python (?P<version>\d\.\d+) \((?P<status>.*)\)'
     for a_tag in a_tags:
