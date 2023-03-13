@@ -1,13 +1,13 @@
+import logging
 import re
 from urllib.parse import urljoin
 import requests_cache
 from bs4 import BeautifulSoup
 from tqdm import tqdm
-from constants import BASE_DIR, MAIN_DOC_URL, PEP_URL, EXPECTED_STATUS
-from outputs import control_output
-import logging
 from configs import configure_argument_parser, configure_logging
-from utils import get_response, find_tag
+from constants import BASE_DIR, EXPECTED_STATUS, MAIN_DOC_URL, PEP_URL
+from outputs import control_output
+from utils import find_tag, get_response
 
 
 def whats_new(session):
@@ -80,7 +80,6 @@ def download(session):
     pdf_a4_link = pdf_a4_tag['href']
     archive_url = urljoin(downloads_url, pdf_a4_link)
     filename = archive_url.split('/')[-1]
-    print(filename)
     downloads_dir = BASE_DIR / 'downloads'
     downloads_dir.mkdir(exist_ok=True)
     archive_path = downloads_dir / filename

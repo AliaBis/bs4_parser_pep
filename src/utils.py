@@ -1,6 +1,6 @@
 import logging
-from requests import RequestException
 from exceptions import ParserFindTagException
+from requests import RequestException
 
 
 def get_response(session, url):
