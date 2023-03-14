@@ -1,9 +1,11 @@
 import logging
 import re
 from urllib.parse import urljoin
+
 import requests_cache
 from bs4 import BeautifulSoup
 from tqdm import tqdm
+
 from configs import configure_argument_parser, configure_logging
 from constants import BASE_DIR, EXPECTED_STATUS, MAIN_DOC_URL, PEP_URL
 from outputs import control_output
@@ -52,7 +54,6 @@ def latest_versions(session):
             a_tags = ul.find_all('a')
             break
     else:
-        # raise AttributeError(('Не найдены версии Python'))
         raise ConnectionError(('Не найдены версии Python'))
     results = [('Ссылка на документацию', 'Версия', 'Статус')]
     pattern = r'Python (?P<version>\d\.\d+) \((?P<status>.*)\)'

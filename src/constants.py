@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 BASE_DIR = Path(__file__).parent
 MAIN_DOC_URL = 'https://docs.python.org/3/'
 LOG_FORMAT = '%(asctime)s - [%(levelname)s] - %(message)s'
